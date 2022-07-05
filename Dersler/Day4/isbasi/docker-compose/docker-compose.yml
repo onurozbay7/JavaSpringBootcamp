@@ -1,0 +1,41 @@
+version: "3.7"
+
+services:
+  #1- MySQL Database
+  mysql:
+    image: mysql
+    container_name: ib_mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: isbasi
+      MYSQL_ROOT_PASSWORD: 123456
+    ports:
+      - 8090:3306
+    volumes:
+      - "./default-tables.sql:/docker-entrypoint-initdb.d/default-tables.sql"
+
+  #2- phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: ib_phpmyadmin
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8091:80
+  
+  #3- Rabbit MQ
+  rabbitMQ:
+    image: rabbitmq:3-management
+    container_name: ib_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_PASS: 123456
+      RABBITMQ_DEFAULT_USER: user
+    restart: always
+    ports:
+      - 8092:15672
+    
